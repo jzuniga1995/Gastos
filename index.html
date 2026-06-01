@@ -45,10 +45,8 @@ html, body {
   font-size: 16px;
 }
 
-/* ── SAFE AREA (notch) ── */
 body { padding-bottom: env(safe-area-inset-bottom); }
 
-/* ── APP SHELL ── */
 .app {
   max-width: 430px;
   margin: 0 auto;
@@ -117,7 +115,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   gap: 16px;
 }
 
-/* ── CARDS ROW ── */
+/* ── SUMMARY CARDS ── */
 .cards-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -132,21 +130,16 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   animation: fadeUp 0.4s ease both;
 }
 
-.stat-card.food  { background: var(--food-bg); }
-.stat-card.med   { background: var(--med-bg); }
 .stat-card.total {
   grid-column: span 2;
-  background: var(--total-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 18px 22px;
+  background: var(--total-bg);
 }
 
-.stat-icon {
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
+.stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
 
 .stat-label {
   font-size: 0.67rem;
@@ -154,10 +147,11 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   letter-spacing: 0.08em;
   font-weight: 600;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.stat-card.food  .stat-label { color: var(--food); }
-.stat-card.med   .stat-label { color: var(--med); }
 .stat-card.total .stat-label { color: var(--total); }
 
 .stat-amount {
@@ -168,8 +162,6 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   line-height: 1;
 }
 
-.stat-card.food  .stat-amount { color: var(--food); }
-.stat-card.med   .stat-amount { color: var(--med); }
 .stat-card.total .stat-amount { color: var(--total); font-size: 1.9rem; }
 
 .stat-count {
@@ -180,6 +172,13 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 
 .total-right { text-align: right; }
+
+/* Dynamic category cards */
+.dyn-card {
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  animation: fadeUp 0.4s ease both;
+}
 
 /* ── SECTION TITLE ── */
 .section-title {
@@ -218,9 +217,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   white-space: nowrap;
 }
 .chip:active { transform: scale(0.95); }
-.chip.active-food  { background: var(--food-soft); border-color: var(--food); color: var(--food); }
-.chip.active-med   { background: var(--med-soft); border-color: var(--med); color: var(--med); }
-.chip.active-all   { background: var(--text); border-color: var(--text); color: var(--white); }
+.chip.active-all { background: var(--text); border-color: var(--text); color: var(--white); }
 
 /* ── RECORDS LIST ── */
 .records-section {
@@ -251,8 +248,6 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   font-size: 1.2rem;
   flex-shrink: 0;
 }
-.record-dot.food { background: var(--food-bg); }
-.record-dot.med  { background: var(--med-bg); }
 
 .record-info { flex: 1; min-width: 0; }
 
@@ -272,6 +267,15 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   font-weight: 400;
 }
 
+.record-cat-tag {
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-top: 4px;
+  display: inline-block;
+}
+
 .record-right {
   display: flex;
   flex-direction: column;
@@ -285,8 +289,6 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   font-size: 1.05rem;
   font-weight: 700;
 }
-.record-amount.food { color: var(--food); }
-.record-amount.med  { color: var(--med); }
 
 .btn-del {
   background: none; border: none;
@@ -305,7 +307,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .empty-state p { font-size: 0.85rem; line-height: 1.5; }
 
-/* ── BOTTOM NAV / FAB ── */
+/* ── BOTTOM BAR ── */
 .bottom-bar {
   position: fixed;
   bottom: 0; left: 50%;
@@ -336,6 +338,21 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 .btn-export-bar:active { background: var(--border); }
 
+.btn-clear-bar {
+  width: 48px;
+  flex-shrink: 0;
+  background: #FEE;
+  border: 1.5px solid #F5C2C2;
+  color: #D94F4F;
+  border-radius: 14px;
+  padding: 14px 0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-clear-bar:active { background: #F5C2C2; transform: scale(0.95); }
+
 .btn-fab {
   flex: 2;
   background: var(--food);
@@ -354,7 +371,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 .btn-fab:active { transform: scale(0.97); box-shadow: none; }
 
-/* ── MODAL SHEET ── */
+/* ── OVERLAY ── */
 .overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.45);
@@ -365,6 +382,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 }
 .overlay.open { opacity: 1; pointer-events: all; }
 
+/* ── BOTTOM SHEET (shared) ── */
 .sheet {
   position: fixed;
   bottom: 0; left: 50%;
@@ -439,31 +457,46 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   background: var(--white);
 }
 
-/* Category toggle */
-.cat-toggle {
+/* ── CATEGORY GRID (add expense) ── */
+.cat-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-right: 2px;
 }
+.cat-grid::-webkit-scrollbar { display: none; }
 
 .cat-btn {
   border: 2px solid var(--border);
   background: var(--bg);
   border-radius: 14px;
-  padding: 14px 12px;
+  padding: 12px 10px;
   cursor: pointer;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--muted);
   text-align: center;
   transition: all 0.15s;
   display: flex; flex-direction: column; align-items: center; gap: 4px;
+  word-break: break-word;
+  line-height: 1.2;
 }
-.cat-btn span.ico { font-size: 1.5rem; }
+.cat-btn span.ico { font-size: 1.4rem; }
 .cat-btn:active { transform: scale(0.97); }
-.cat-btn.sel-food { border-color: var(--food); background: var(--food-bg); color: var(--food); }
-.cat-btn.sel-med  { border-color: var(--med);  background: var(--med-bg);  color: var(--med); }
+.cat-btn.sel { border-color: var(--food); background: var(--food-bg); color: var(--food); }
+
+/* Add new cat button inside grid */
+.cat-btn.add-cat-btn {
+  border-style: dashed;
+  border-color: var(--border);
+  color: var(--muted);
+}
+.cat-btn.add-cat-btn:active { background: var(--bg2); }
 
 .btn-confirm {
   background: var(--food);
@@ -481,6 +514,136 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   margin-top: 4px;
 }
 .btn-confirm:active { transform: scale(0.98); box-shadow: none; }
+
+/* ── MANAGE CATEGORIES SHEET ── */
+.cat-manage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cat-manage-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg);
+  border-radius: 14px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border);
+}
+
+.cat-manage-icon {
+  font-size: 1.4rem;
+  width: 36px; text-align: center;
+  flex-shrink: 0;
+}
+
+.cat-manage-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.cat-manage-built { font-size: 0.65rem; color: var(--muted); }
+
+.btn-del-cat {
+  background: none; border: none;
+  color: #CCC;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.btn-del-cat:active { color: #E05555; background: #FEE; }
+
+/* new category form */
+.new-cat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: var(--bg2);
+  border-radius: 16px;
+  border: 1.5px dashed var(--border);
+}
+
+.new-cat-form-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.emoji-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.emoji-opt {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+  flex-shrink: 0;
+}
+.emoji-opt.sel-emoji { border-color: var(--food); background: var(--food-bg); }
+.emoji-opt:active { transform: scale(0.9); }
+
+.color-picker {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2.5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.12s, border-color 0.12s;
+  flex-shrink: 0;
+}
+.color-swatch.sel-color { border-color: var(--text); transform: scale(1.15); }
+
+.inp-sm {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.inp-sm:focus { border-color: var(--food); }
+
+.btn-add-cat-confirm {
+  background: var(--text);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-add-cat-confirm:active { opacity: 0.8; }
 
 /* ── TOAST ── */
 .toast {
@@ -504,29 +667,9 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .toast.success { background: var(--med); }
 .toast.error   { background: #D94F4F; }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* ── MONTH SELECT ── */
+.month-select-wrap { position: relative; }
 
-.stat-card:nth-child(1) { animation-delay: 0.05s; }
-.stat-card:nth-child(2) { animation-delay: 0.10s; }
-.stat-card:nth-child(3) { animation-delay: 0.15s; }
-
-/* Month select styled */
-.month-select-wrap {
-  position: relative;
-}
-.month-select-wrap::after {
-  content: '▾';
-  position: absolute;
-  right: 14px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted);
-  pointer-events: none;
-  font-size: 0.75rem;
-}
 .month-select {
   background: var(--white);
   border: 1.5px solid var(--border);
@@ -543,6 +686,16 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   transition: border-color 0.15s;
 }
 .month-select:focus { border-color: var(--food); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.05s; }
+.stat-card:nth-child(2) { animation-delay: 0.10s; }
+.stat-card:nth-child(3) { animation-delay: 0.15s; }
 </style>
 </head>
 <body>
@@ -555,11 +708,14 @@ body { padding-bottom: env(safe-area-inset-bottom); }
         <h1>Mis <em>Gastos</em></h1>
         <div class="topbar-date" id="topbar-date"></div>
       </div>
-      <div class="month-select-wrap">
-        <select class="month-select" id="filter-month" onchange="renderAll()">
-          <option value="all">Todo</option>
-        </select>
-        <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.7rem">▾</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="month-select-wrap">
+          <select class="month-select" id="filter-month" onchange="renderAll()">
+            <option value="all">Todo</option>
+          </select>
+          <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.7rem">▾</span>
+        </div>
+        <button class="btn-icon" onclick="openCatManager()" title="Gestionar categorías" style="font-size:1rem">⚙️</button>
       </div>
     </div>
   </div>
@@ -568,19 +724,8 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   <div class="scroll-area">
 
     <!-- SUMMARY CARDS -->
-    <div class="cards-row">
-      <div class="stat-card food">
-        <div class="stat-icon">🍽</div>
-        <div class="stat-label">Alimentación</div>
-        <div class="stat-amount" id="sum-food">L 0</div>
-        <div class="stat-count" id="cnt-food">0 registros</div>
-      </div>
-      <div class="stat-card med">
-        <div class="stat-icon">🏥</div>
-        <div class="stat-label">Seguro Médico</div>
-        <div class="stat-amount" id="sum-med">L 0</div>
-        <div class="stat-count" id="cnt-med">0 registros</div>
-      </div>
+    <div class="cards-row" id="summary-cards">
+      <!-- rendered dynamically -->
       <div class="stat-card total">
         <div>
           <div class="stat-label">Total Gastado</div>
@@ -595,11 +740,7 @@ body { padding-bottom: env(safe-area-inset-bottom); }
     <!-- FILTER CHIPS -->
     <div>
       <div class="section-title" style="margin-bottom:10px">Categoría</div>
-      <div class="filter-bar" id="chips">
-        <button class="chip active-all" data-cat="all" onclick="setChip(this,'all')">Todos</button>
-        <button class="chip" data-cat="food" onclick="setChip(this,'food')">🍽 Alimentación</button>
-        <button class="chip" data-cat="medical" onclick="setChip(this,'med')">🏥 Seguro Médico</button>
-      </div>
+      <div class="filter-bar" id="chips"></div>
     </div>
 
     <!-- RECORDS -->
@@ -608,60 +749,86 @@ body { padding-bottom: env(safe-area-inset-bottom); }
       <div class="records-section" id="records"></div>
     </div>
 
-  </div><!-- end scroll-area -->
+  </div>
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
     <button class="btn-export-bar" onclick="exportExcel()">
       <span>📊</span> Excel
     </button>
+    <button class="btn-clear-bar" onclick="clearHistory()" title="Limpiar historial">
+      🗑
+    </button>
     <button class="btn-fab" onclick="openSheet()">
       <span style="font-size:1.2rem">＋</span> Agregar Gasto
     </button>
   </div>
 
-</div><!-- end app -->
+</div>
 
 <!-- OVERLAY -->
-<div class="overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="overlay" id="overlay" onclick="closeAll()"></div>
 
-<!-- BOTTOM SHEET (ADD FORM) -->
-<div class="sheet" id="sheet">
+<!-- SHEET: ADD EXPENSE -->
+<div class="sheet" id="sheet-add">
   <div class="sheet-handle"></div>
   <div class="sheet-header">
     <div class="sheet-title">Nuevo Gasto</div>
-    <button class="sheet-close" onclick="closeSheet()">✕</button>
+    <button class="sheet-close" onclick="closeAll()">✕</button>
   </div>
   <div class="sheet-body">
-
     <div class="field">
       <label>Categoría</label>
-      <div class="cat-toggle">
-        <button class="cat-btn sel-food" id="cat-food" onclick="selectCat('food')">
-          <span class="ico">🍽</span>Alimentación
-        </button>
-        <button class="cat-btn" id="cat-med" onclick="selectCat('medical')">
-          <span class="ico">🏥</span>Seguro Médico
-        </button>
-      </div>
+      <div class="cat-grid" id="cat-grid-add"></div>
     </div>
-
     <div class="field">
       <label>Descripción</label>
       <input type="text" id="inp-desc" placeholder="ej. Supermercado La Colonia…" autocomplete="off">
     </div>
-
     <div class="field">
       <label>Monto (Lempiras)</label>
       <input type="number" id="inp-amount" placeholder="0.00" min="0" step="0.01" inputmode="decimal">
     </div>
-
     <div class="field">
       <label>Fecha</label>
       <input type="date" id="inp-date">
     </div>
-
     <button class="btn-confirm" onclick="addRecord()">Guardar Gasto</button>
+  </div>
+</div>
+
+<!-- SHEET: MANAGE CATEGORIES -->
+<div class="sheet" id="sheet-cats">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Categorías</div>
+    <button class="sheet-close" onclick="closeAll()">✕</button>
+  </div>
+  <div class="sheet-body" style="overflow-y:auto;max-height:85vh;">
+
+    <div class="cat-manage-list" id="cat-manage-list"></div>
+
+    <!-- NEW CATEGORY FORM -->
+    <div class="new-cat-form">
+      <div class="new-cat-form-title">✨ Nueva categoría</div>
+
+      <div class="field" style="gap:4px">
+        <label>Nombre</label>
+        <input class="inp-sm" type="text" id="new-cat-name" placeholder="ej. Transporte">
+      </div>
+
+      <div>
+        <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);display:block;margin-bottom:6px">Ícono</label>
+        <div class="emoji-picker" id="emoji-picker"></div>
+      </div>
+
+      <div>
+        <label style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);display:block;margin-bottom:6px">Color</label>
+        <div class="color-picker" id="color-picker"></div>
+      </div>
+
+      <button class="btn-add-cat-confirm" onclick="addCategory()">Agregar Categoría</button>
+    </div>
 
   </div>
 </div>
@@ -670,50 +837,79 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 <div class="toast" id="toast"></div>
 
 <script>
-// ── STATE ──────────────────────────────────────────────────────
-let activeCat   = 'all';
-let selectedCat = 'food';
-const DB_KEY    = 'gastos_ls_v1';
-const MONTHS    = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+// ──────────────────────────────────────────────────────────────
+// CONSTANTS & STATE
+// ──────────────────────────────────────────────────────────────
+const DB_KEY      = 'gastos_ls_v1';
+const CATS_KEY    = 'gastos_cats_v1';
+const MONTHS      = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
 const MONTHS_FULL = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-// ── STORAGE ───────────────────────────────────────────────────
-function loadData() {
-  try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; }
-  catch { return []; }
+const EMOJI_OPTIONS = ['🛒','🍽','🏥','🚌','🚗','🎓','🏠','👗','💊','🎬','🐾','⚡','📱','💡','💇','🧴','🎮','✈️','🏋️','📚','☕','🍕','🎁','🧹','💰','🛠️','🩺','🍼'];
+
+const COLOR_OPTIONS = [
+  { name:'naranja',  accent:'#E07B39', bg:'#FEF0E6', soft:'#FBDEC7' },
+  { name:'verde',    accent:'#3A8C74', bg:'#E6F4EF', soft:'#C0E2D9' },
+  { name:'azul',     accent:'#2E5FA3', bg:'#EBF1FB', soft:'#C5D7F5' },
+  { name:'morado',   accent:'#7C4DBC', bg:'#F3EDFC', soft:'#D8C4F5' },
+  { name:'rojo',     accent:'#D94F4F', bg:'#FEEBEB', soft:'#F5C2C2' },
+  { name:'rosa',     accent:'#D4579A', bg:'#FEE9F4', soft:'#F5C0DE' },
+  { name:'amarillo', accent:'#C49A0A', bg:'#FDF8E3', soft:'#F2E4A0' },
+  { name:'gris',     accent:'#5E6E82', bg:'#EEF1F5', soft:'#C8D2DF' },
+];
+
+// Built-in categories (id-based, cannot be deleted)
+const BUILTIN_CATS = [
+  { id: 'food',    name: 'Alimentación', emoji: '🍽', color: COLOR_OPTIONS[0], builtin: true },
+  { id: 'medical', name: 'Seguro Médico', emoji: '🏥', color: COLOR_OPTIONS[1], builtin: true },
+];
+
+let activeCat    = 'all';
+let selectedCat  = 'food';    // id of cat chosen in add form
+let selectedEmoji = EMOJI_OPTIONS[0];
+let selectedColor = COLOR_OPTIONS[2];
+let activeSheet  = null;      // 'add' | 'cats' | null
+
+// ──────────────────────────────────────────────────────────────
+// STORAGE
+// ──────────────────────────────────────────────────────────────
+function loadData()   { try { return JSON.parse(localStorage.getItem(DB_KEY))   || []; } catch { return []; } }
+function saveData(r)  { localStorage.setItem(DB_KEY,   JSON.stringify(r)); }
+function loadCats()   { try { return JSON.parse(localStorage.getItem(CATS_KEY)) || []; } catch { return []; } }
+function saveCats(c)  { localStorage.setItem(CATS_KEY, JSON.stringify(c)); }
+
+function allCats() {
+  return [...BUILTIN_CATS, ...loadCats()];
 }
 
-function saveData(records) {
-  localStorage.setItem(DB_KEY, JSON.stringify(records));
+function getCat(id) {
+  return allCats().find(c => c.id === id) || { id, name: id, emoji: '📦', color: COLOR_OPTIONS[7] };
 }
 
-// ── HELPERS ──────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// HELPERS
+// ──────────────────────────────────────────────────────────────
 function fmt(n) {
   return 'L ' + Number(n).toLocaleString('es-HN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
 function fmtShort(n) {
   if (n >= 10000) return 'L ' + (n / 1000).toFixed(1) + 'k';
   return fmt(n);
 }
-
 function fmtDate(s) {
   const [y, m, d] = s.split('-');
   return `${d} ${MONTHS[+m - 1]} ${y}`;
 }
-
 function getYM(fecha) { return fecha.slice(0, 7); }
 
 function setDefaultDate() {
   document.getElementById('inp-date').value = new Date().toISOString().split('T')[0];
 }
-
 function updateTopbarDate() {
   const d = new Date();
   document.getElementById('topbar-date').textContent =
     `${d.getDate()} de ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`;
 }
-
 function toast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -722,42 +918,189 @@ function toast(msg, type = '') {
   t._to = setTimeout(() => t.className = 'toast', 2600);
 }
 
-// ── SHEET ────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// SHEETS
+// ──────────────────────────────────────────────────────────────
 function openSheet() {
-  document.getElementById('sheet').classList.add('open');
+  activeSheet = 'add';
+  buildCatGrid();
+  document.getElementById('sheet-add').classList.add('open');
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   setTimeout(() => document.getElementById('inp-desc').focus(), 400);
 }
 
-function closeSheet() {
-  document.getElementById('sheet').classList.remove('open');
+function openCatManager() {
+  activeSheet = 'cats';
+  buildEmojiPicker();
+  buildColorPicker();
+  buildCatManageList();
+  document.getElementById('sheet-cats').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAll() {
+  document.getElementById('sheet-add').classList.remove('open');
+  document.getElementById('sheet-cats').classList.remove('open');
   document.getElementById('overlay').classList.remove('open');
   document.body.style.overflow = '';
+  activeSheet = null;
 }
 
-// ── CATEGORY TOGGLE ──────────────────────────────────────────
-function selectCat(cat) {
-  selectedCat = cat;
-  document.getElementById('cat-food').className = 'cat-btn' + (cat === 'food' ? ' sel-food' : '');
-  document.getElementById('cat-med').className  = 'cat-btn' + (cat === 'medical' ? ' sel-med' : '');
-}
+// ──────────────────────────────────────────────────────────────
+// BUILD CAT GRID (add expense form)
+// ──────────────────────────────────────────────────────────────
+function buildCatGrid() {
+  const grid = document.getElementById('cat-grid-add');
+  const cats = allCats();
+  grid.innerHTML = '';
 
-// ── CHIPS ────────────────────────────────────────────────────
-function setChip(el, cat) {
-  activeCat = cat;
-  document.querySelectorAll('.chip').forEach(c => {
-    c.className = 'chip';
-    if (c === el) {
-      if (cat === 'all') c.classList.add('active-all');
-      else if (cat === 'food') c.classList.add('active-food');
-      else c.classList.add('active-med');
+  // make sure selectedCat still exists
+  if (!cats.find(c => c.id === selectedCat)) selectedCat = cats[0]?.id || 'food';
+
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (cat.id === selectedCat ? ' sel' : '');
+    if (cat.id === selectedCat) {
+      btn.style.borderColor = cat.color.accent;
+      btn.style.background  = cat.color.bg;
+      btn.style.color       = cat.color.accent;
     }
+    btn.innerHTML = `<span class="ico">${cat.emoji}</span>${cat.name}`;
+    btn.onclick = () => {
+      selectedCat = cat.id;
+      buildCatGrid();
+    };
+    grid.appendChild(btn);
   });
-  renderAll();
 }
 
-// ── MONTH FILTER ─────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// BUILD EMOJI PICKER
+// ──────────────────────────────────────────────────────────────
+function buildEmojiPicker() {
+  const wrap = document.getElementById('emoji-picker');
+  wrap.innerHTML = '';
+  EMOJI_OPTIONS.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-opt' + (e === selectedEmoji ? ' sel-emoji' : '');
+    btn.textContent = e;
+    btn.onclick = () => { selectedEmoji = e; buildEmojiPicker(); };
+    wrap.appendChild(btn);
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// BUILD COLOR PICKER
+// ──────────────────────────────────────────────────────────────
+function buildColorPicker() {
+  const wrap = document.getElementById('color-picker');
+  wrap.innerHTML = '';
+  COLOR_OPTIONS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'color-swatch' + (c.name === selectedColor.name ? ' sel-color' : '');
+    btn.style.background = c.accent;
+    btn.title = c.name;
+    btn.onclick = () => { selectedColor = c; buildColorPicker(); };
+    wrap.appendChild(btn);
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// BUILD MANAGE CATEGORIES LIST
+// ──────────────────────────────────────────────────────────────
+function buildCatManageList() {
+  const list = document.getElementById('cat-manage-list');
+  list.innerHTML = '';
+  allCats().forEach(cat => {
+    const item = document.createElement('div');
+    item.className = 'cat-manage-item';
+    item.style.borderColor = cat.color.accent + '55';
+    item.style.background = cat.color.bg;
+    item.innerHTML = `
+      <div class="cat-manage-icon">${cat.emoji}</div>
+      <div class="cat-manage-name" style="color:${cat.color.accent}">${cat.name}
+        ${cat.builtin ? '<div class="cat-manage-built">predeterminada</div>' : ''}
+      </div>
+      ${!cat.builtin ? `<button class="btn-del-cat" onclick="deleteCategory('${cat.id}')" title="Eliminar">🗑</button>` : ''}
+    `;
+    list.appendChild(item);
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// ADD CATEGORY
+// ──────────────────────────────────────────────────────────────
+function addCategory() {
+  const nameEl = document.getElementById('new-cat-name');
+  const name = nameEl.value.trim();
+  if (!name) { toast('Escribe un nombre', 'error'); return; }
+
+  const cats = loadCats();
+  const id = 'custom_' + Date.now();
+  cats.push({ id, name, emoji: selectedEmoji, color: selectedColor, builtin: false });
+  saveCats(cats);
+  nameEl.value = '';
+  selectedEmoji = EMOJI_OPTIONS[0];
+  selectedColor = COLOR_OPTIONS[2];
+  buildCatManageList();
+  buildEmojiPicker();
+  buildColorPicker();
+  renderAll();
+  toast('✓ Categoría creada', 'success');
+}
+
+// ──────────────────────────────────────────────────────────────
+// DELETE CATEGORY
+// ──────────────────────────────────────────────────────────────
+function deleteCategory(id) {
+  const records = loadData();
+  const count = records.filter(r => r.categoria === id).length;
+  const msg = count > 0
+    ? `Esta categoría tiene ${count} registro${count > 1 ? 's' : ''}. ¿Eliminar de todas formas?`
+    : '¿Eliminar esta categoría?';
+  if (!confirm(msg)) return;
+  const cats = loadCats().filter(c => c.id !== id);
+  saveCats(cats);
+  if (selectedCat === id) selectedCat = 'food';
+  if (activeCat === id) activeCat = 'all';
+  buildCatManageList();
+  renderAll();
+  toast('Categoría eliminada');
+}
+
+// ──────────────────────────────────────────────────────────────
+// CHIPS
+// ──────────────────────────────────────────────────────────────
+function renderChips() {
+  const wrap = document.getElementById('chips');
+  wrap.innerHTML = '';
+
+  const allBtn = document.createElement('button');
+  allBtn.className = 'chip' + (activeCat === 'all' ? ' active-all' : '');
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = () => { activeCat = 'all'; renderAll(); };
+  wrap.appendChild(allBtn);
+
+  allCats().forEach(cat => {
+    const btn = document.createElement('button');
+    const isActive = activeCat === cat.id;
+    btn.className = 'chip';
+    if (isActive) {
+      btn.style.background   = cat.color.soft;
+      btn.style.borderColor  = cat.color.accent;
+      btn.style.color        = cat.color.accent;
+    }
+    btn.textContent = `${cat.emoji} ${cat.name}`;
+    btn.onclick = () => { activeCat = cat.id; renderAll(); };
+    wrap.appendChild(btn);
+  });
+}
+
+// ──────────────────────────────────────────────────────────────
+// MONTH FILTER
+// ──────────────────────────────────────────────────────────────
 function populateMonthFilter() {
   const records = loadData();
   const months = [...new Set(records.map(r => getYM(r.fecha)))].sort().reverse();
@@ -771,7 +1114,11 @@ function populateMonthFilter() {
   if ([...sel.options].some(o => o.value === current)) sel.value = current;
 }
 
-// ── ADD RECORD ───────────────────────────────────────────────
+function getMonthFilter() { return document.getElementById('filter-month').value; }
+
+// ──────────────────────────────────────────────────────────────
+// ADD RECORD
+// ──────────────────────────────────────────────────────────────
 function addRecord() {
   const date   = document.getElementById('inp-date').value;
   const desc   = document.getElementById('inp-desc').value.trim();
@@ -789,13 +1136,15 @@ function addRecord() {
   document.getElementById('inp-desc').value   = '';
   document.getElementById('inp-amount').value = '';
 
-  closeSheet();
+  closeAll();
   populateMonthFilter();
   renderAll();
   toast('✓ Gasto guardado', 'success');
 }
 
-// ── DELETE ───────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// DELETE RECORD
+// ──────────────────────────────────────────────────────────────
 function deleteRecord(id) {
   if (!confirm('¿Eliminar este registro?')) return;
   const records = loadData().filter(r => r.id !== id);
@@ -805,41 +1154,67 @@ function deleteRecord(id) {
   toast('Registro eliminado');
 }
 
-// ── FILTER HELPERS ───────────────────────────────────────────
-function getMonthFilter() {
-  return document.getElementById('filter-month').value;
-}
-
+// ──────────────────────────────────────────────────────────────
+// FILTERS
+// ──────────────────────────────────────────────────────────────
 function applyFilters(records) {
   const mf = getMonthFilter();
   const cf = activeCat;
   return records.filter(r => {
-    const catMatch = cf === 'all' || r.categoria === (cf === 'med' ? 'medical' : cf);
+    const catMatch = cf === 'all' || r.categoria === cf;
     const monMatch = mf === 'all' || getYM(r.fecha) === mf;
     return catMatch && monMatch;
   }).sort((a, b) => b.fecha.localeCompare(a.fecha) || b.id - a.id);
 }
 
-// ── RENDER ALL ───────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// RENDER ALL
+// ──────────────────────────────────────────────────────────────
 function renderAll() {
-  renderSummary();
+  renderSummaryCards();
+  renderChips();
   renderRecords();
 }
 
-function renderSummary() {
+function renderSummaryCards() {
   const mf = getMonthFilter();
-  const records = loadData().filter(r => mf === 'all' || getYM(r.fecha) === mf);
-  const food  = records.filter(r => r.categoria === 'food');
-  const med   = records.filter(r => r.categoria === 'medical');
-  const sumF  = food.reduce((s, r) => s + r.monto, 0);
-  const sumM  = med.reduce((s,  r) => s + r.monto, 0);
+  const all = loadData().filter(r => mf === 'all' || getYM(r.fecha) === mf);
+  const cats = allCats();
+  const container = document.getElementById('summary-cards');
 
-  document.getElementById('sum-food').textContent  = fmtShort(sumF);
-  document.getElementById('sum-med').textContent   = fmtShort(sumM);
-  document.getElementById('sum-total').textContent = fmt(sumF + sumM);
-  document.getElementById('cnt-food').textContent  = `${food.length} registro${food.length !== 1 ? 's' : ''}`;
-  document.getElementById('cnt-med').textContent   = `${med.length} registro${med.length !== 1 ? 's' : ''}`;
-  document.getElementById('cnt-total').textContent = `${records.length} en total`;
+  // rebuild grid except last child (total card)
+  // first, remove old dyn cards
+  container.querySelectorAll('.dyn-card').forEach(el => el.remove());
+
+  let grandTotal = 0;
+  cats.forEach((cat, i) => {
+    const subset = all.filter(r => r.categoria === cat.id);
+    const sum = subset.reduce((s, r) => s + r.monto, 0);
+    grandTotal += sum;
+
+    const card = document.createElement('div');
+    card.className = 'dyn-card';
+    card.style.background = cat.color.bg;
+    card.style.animationDelay = `${i * 0.05}s`;
+    card.innerHTML = `
+      <div class="stat-icon">${cat.emoji}</div>
+      <div class="stat-label" style="color:${cat.color.accent}">${cat.name}</div>
+      <div class="stat-amount" style="color:${cat.color.accent};font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;letter-spacing:-0.5px;line-height:1">${fmtShort(sum)}</div>
+      <div class="stat-count">${subset.length} registro${subset.length !== 1 ? 's' : ''}</div>
+    `;
+    // insert before total card
+    container.insertBefore(card, container.querySelector('.stat-card.total'));
+  });
+
+  document.getElementById('sum-total').textContent = fmt(grandTotal);
+  document.getElementById('cnt-total').textContent = `${all.length} en total`;
+
+  // fix grid layout: if odd number of dyn cards, last one spans full width
+  const dynCards = container.querySelectorAll('.dyn-card');
+  dynCards.forEach(c => c.style.gridColumn = '');
+  if (dynCards.length % 2 !== 0) {
+    dynCards[dynCards.length - 1].style.gridColumn = 'span 2';
+  }
 }
 
 function renderRecords() {
@@ -857,18 +1232,19 @@ function renderRecords() {
   }
 
   filtered.forEach((r, i) => {
-    const isFood = r.categoria === 'food';
+    const cat = getCat(r.categoria);
     const div = document.createElement('div');
     div.className = 'record-item';
     div.style.animationDelay = `${i * 0.04}s`;
     div.innerHTML = `
-      <div class="record-dot ${isFood ? 'food' : 'med'}">${isFood ? '🍽' : '🏥'}</div>
+      <div class="record-dot" style="background:${cat.color.bg}">${cat.emoji}</div>
       <div class="record-info">
         <div class="record-desc">${r.descripcion || '—'}</div>
         <div class="record-date">${fmtDate(r.fecha)}</div>
+        <span class="record-cat-tag" style="background:${cat.color.soft};color:${cat.color.accent}">${cat.name}</span>
       </div>
       <div class="record-right">
-        <div class="record-amount ${isFood ? 'food' : 'med'}">${fmt(r.monto)}</div>
+        <div class="record-amount" style="color:${cat.color.accent}">${fmt(r.monto)}</div>
         <button class="btn-del" onclick="deleteRecord(${r.id})" title="Eliminar">✕</button>
       </div>
     `;
@@ -876,43 +1252,75 @@ function renderRecords() {
   });
 }
 
-// ── EXPORT ───────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// CLEAR HISTORY
+// ──────────────────────────────────────────────────────────────
+function clearHistory() {
+  const mf = getMonthFilter();
+  const all = loadData();
+  const toDelete = all.filter(r => mf === 'all' || getYM(r.fecha) === mf);
+  if (!toDelete.length) { toast('No hay registros para limpiar', 'error'); return; }
+
+  const label = mf === 'all'
+    ? `todos los ${toDelete.length} registros`
+    : `los ${toDelete.length} registros de ${document.getElementById('filter-month').options[document.getElementById('filter-month').selectedIndex].text}`;
+
+  if (!confirm(`¿Eliminar ${label}? Esta acción no se puede deshacer.`)) return;
+
+  const remaining = all.filter(r => !(mf === 'all' || getYM(r.fecha) === mf));
+  saveData(remaining);
+  populateMonthFilter();
+  renderAll();
+  toast('🗑 Historial limpiado', 'success');
+}
+
+// ──────────────────────────────────────────────────────────────
+// EXPORT
+// ──────────────────────────────────────────────────────────────
 function exportExcel() {
   const filtered = applyFilters(loadData());
   if (!filtered.length) { toast('Sin datos para exportar', 'error'); return; }
 
-  const rows = filtered.map(r => ({
-    Fecha: fmtDate(r.fecha),
-    Categoría: r.categoria === 'food' ? 'Alimentación' : 'Seguro Médico',
-    Descripción: r.descripcion || '',
-    'Monto (L)': Number(r.monto)
-  }));
+  const rows = filtered.map(r => {
+    const cat = getCat(r.categoria);
+    return {
+      Fecha: fmtDate(r.fecha),
+      Categoría: cat.name,
+      Descripción: r.descripcion || '',
+      'Monto (L)': Number(r.monto)
+    };
+  });
   const total = rows.reduce((s, r) => s + r['Monto (L)'], 0);
   rows.push({ Fecha: '', Categoría: '', Descripción: 'TOTAL', 'Monto (L)': total });
 
   const ws = XLSX.utils.json_to_sheet(rows);
-  ws['!cols'] = [{ wch: 16 }, { wch: 18 }, { wch: 32 }, { wch: 14 }];
+  ws['!cols'] = [{ wch: 16 }, { wch: 22 }, { wch: 32 }, { wch: 14 }];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Gastos');
   XLSX.writeFile(wb, `gastos_${new Date().toISOString().split('T')[0]}.xlsx`);
   toast('📊 Excel descargado', 'success');
 }
 
-// ── KEYBOARD ─────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// KEYBOARD & SWIPE
+// ──────────────────────────────────────────────────────────────
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('sheet').classList.contains('open')) addRecord();
-  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && activeSheet === 'add') addRecord();
+  if (e.key === 'Escape') closeAll();
 });
 
-// ── SWIPE DOWN TO CLOSE SHEET ────────────────────────────────
 (function () {
   let startY = 0;
-  const sheet = document.getElementById('sheet');
-  sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-  sheet.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - startY > 80) closeSheet(); }, { passive: true });
+  ['sheet-add','sheet-cats'].forEach(id => {
+    const sheet = document.getElementById(id);
+    sheet.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    sheet.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - startY > 80) closeAll(); }, { passive: true });
+  });
 })();
 
-// ── START ─────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────────────────────
 setDefaultDate();
 updateTopbarDate();
 populateMonthFilter();
