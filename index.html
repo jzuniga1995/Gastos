@@ -782,8 +782,8 @@ body { padding-bottom: env(safe-area-inset-bottom); }
       <div class="cat-grid" id="cat-grid-add"></div>
     </div>
     <div class="field">
-      <label>Descripción</label>
-      <input type="text" id="inp-desc" placeholder="ej. Supermercado La Colonia…" autocomplete="off">
+      <label>Descripción <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:0.65rem">(opcional)</span></label>
+      <input type="text" id="inp-desc" placeholder="ej. La Colonia, Farmacia Kielsa…" autocomplete="off">
     </div>
     <div class="field">
       <label>Monto (Lempiras)</label>
@@ -1125,7 +1125,6 @@ function addRecord() {
   const amount = parseFloat(document.getElementById('inp-amount').value);
 
   if (!date)               { toast('Selecciona una fecha', 'error'); return; }
-  if (!desc)               { toast('Escribe una descripción', 'error'); return; }
   if (!amount || amount <= 0) { toast('Ingresa un monto válido', 'error'); return; }
 
   const records = loadData();
