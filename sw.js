@@ -1,4 +1,4 @@
-const CACHE = 'misgastos-v2';
+const CACHE = 'misgastos-v3';
 const ASSETS = [
   './',
   './index.html',
