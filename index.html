@@ -6,7 +6,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="theme-color" content="#F7F4EF">
+<meta name="theme-color" content="#E07B39">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon.svg">
 <title>MisGastos</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -1316,6 +1318,15 @@ document.addEventListener('keydown', e => {
     sheet.addEventListener('touchend',   e => { if (e.changedTouches[0].clientY - startY > 80) closeAll(); }, { passive: true });
   });
 })();
+
+// ──────────────────────────────────────────────────────────────
+// SERVICE WORKER
+// ──────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 
 // ──────────────────────────────────────────────────────────────
 // INIT
