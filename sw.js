@@ -1,9 +1,11 @@
-const CACHE = 'misgastos-v1';
+const CACHE = 'misgastos-v2';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icons/icon.svg',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
   'https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap'
 ];
